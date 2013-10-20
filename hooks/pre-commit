@@ -1,0 +1,9 @@
+#!/bin/bash
+echo running pre commit hook
+
+cmd "/c /work\phone8\StoreAndForward\build\build.bat"
+if [ $? -ne 0 ]
+then
+        echo An error occurred running build
+        exit 1
+fi
