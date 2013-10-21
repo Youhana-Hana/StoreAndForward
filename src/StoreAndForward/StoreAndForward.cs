@@ -7,6 +7,11 @@
             throw new System.NotImplementedException();
         }
 
+        public IMessage Store(IMessage message)
+        {
+            return null;
+        }
+        
         public void Stop()
         {
             throw new System.NotImplementedException();
