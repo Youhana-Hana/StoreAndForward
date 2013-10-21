@@ -74,6 +74,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="GivenAMessage.cs" />
+    <Compile Include="GivenAQueueStore.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="GivenAStoreAndForward.cs" />
     <Compile Include="MainPage.xaml.cs">

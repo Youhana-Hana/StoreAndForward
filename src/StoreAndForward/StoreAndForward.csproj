@@ -87,7 +87,9 @@
   <ItemGroup>
     <Compile Include="IMessage.cs" />
     <Compile Include="IService.cs" />
+    <Compile Include="IStore.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="QueueStore.cs" />
     <Compile Include="StoreAndForward.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
