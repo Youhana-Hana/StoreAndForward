@@ -1,30 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-namespace StoreAndForward
+﻿namespace StoreAndForward
 {
-    public class QueueStore : IStore
-    {
+    using System;
+    using System.Collections.Generic;
 
+    public class QueueStore
+    {
         public QueueStore()
         {
             this.Store = new Queue<IMessage>();
         }
-        
+
+        public int Count
+        {
+            get
+            {
+                return this.Store.Count;
+            }
+        }
+
         private Queue<IMessage> Store { get; set; }
 
-        public IMessage Add(IMessage message)
+        public IMessage Enqueue(IMessage message)
         {
             if (message == null)
             {
                 throw new ArgumentNullException("message");
             }
-            
-            return null;
+
+            this.Store.Enqueue(message);
+
+            return message;
         }
 
-        public IMessage Remove(IMessage message)
+        public IMessage Dequeue()
         {
-            return null;
+            if (this.Store.Count == 0)
+            {
+                return null;
+            }
+            
+            return this.Store.Dequeue();
         }
     }
 }
