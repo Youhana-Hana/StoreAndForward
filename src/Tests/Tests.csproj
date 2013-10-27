@@ -73,6 +73,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Fakes\MessageMoqaLate.cs" />
+    <Compile Include="Fakes\ServiceMoqaLate.cs" />
+    <Compile Include="Fakes\StoreMoqaLate.cs" />
     <Compile Include="GivenAMessage.cs" />
     <Compile Include="GivenAQueueStore.cs" />
     <Compile Include="LocalizedStrings.cs" />

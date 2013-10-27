@@ -85,17 +85,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ForwardService.cs" />
     <Compile Include="IMessage.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="IStore.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="NetworkStateMonitorService.cs" />
     <Compile Include="QueueStore.cs" />
     <Compile Include="StoreAndForward.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoreService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MoqaLateCommandLine\MoqaLate.exe" />
+    <Content Include="MoqaLateCommandLine\MoqaLateExcludedFiles.txt" />
+    <Content Include="MoqaLateCommandLine\Ninject.dll" />
+    <Content Include="MoqaLateCommandLine\READMEHowToEnableMockGeneration.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
+  <PropertyGroup>
+    <PostBuildEvent>$(ProjectDir)\MoqaLateCommandLine\MoqaLate.exe "$(SolutionDir)$(ProjectName)" "$(SolutionDir)Tests\Fakes"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

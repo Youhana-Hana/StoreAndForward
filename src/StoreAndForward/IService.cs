@@ -4,8 +4,6 @@
     {
         void Start();
         
-        IMessage Store(IMessage message);
-
         void Stop();
     }
 }

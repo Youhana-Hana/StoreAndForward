@@ -3,14 +3,14 @@
     using System;
     using System.Collections.Generic;
 
-    public class QueueStore
+    internal class QueueStore
     {
-        public QueueStore()
+        internal QueueStore()
         {
             this.Store = new Queue<IMessage>();
         }
 
-        public int Count
+        internal int Count
         {
             get
             {
@@ -20,7 +20,7 @@
 
         private Queue<IMessage> Store { get; set; }
 
-        public IMessage Enqueue(IMessage message)
+        internal void Enqueue(IMessage message)
         {
             if (message == null)
             {
@@ -28,11 +28,9 @@
             }
 
             this.Store.Enqueue(message);
-
-            return message;
         }
 
-        public IMessage Dequeue()
+        internal IMessage Dequeue()
         {
             if (this.Store.Count == 0)
             {

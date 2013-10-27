@@ -32,9 +32,8 @@
         public void WhenCallingEnqueueShouldAddMessage()
         {
             var message = this.GetMessage("http://www.test.com");
-            var actual = this.Store.Enqueue(message);
+            this.Store.Enqueue(message);
 
-            Assert.AreEqual(message, actual);
             Assert.AreEqual(1, this.Store.Count);
         }
 
