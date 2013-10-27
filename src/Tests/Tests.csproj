@@ -73,11 +73,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Fakes\MessageMoqaLate.cs" />
-    <Compile Include="Fakes\ServiceMoqaLate.cs" />
-    <Compile Include="Fakes\StoreMoqaLate.cs" />
+    <Compile Include="Service References\Fakes\MessageMoqaLate.cs" />
+    <Compile Include="Service References\Fakes\ServiceMoqaLate.cs" />
+    <Compile Include="Service References\Fakes\StoreMoqaLate.cs" />
     <Compile Include="GivenAMessage.cs" />
     <Compile Include="GivenAQueueStore.cs" />
+    <Compile Include="GivenAStore.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="GivenAStoreAndForward.cs" />
     <Compile Include="MainPage.xaml.cs">

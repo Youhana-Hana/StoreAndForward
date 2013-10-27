@@ -14,6 +14,12 @@
             this.Headers = headers;
         }
 
+        internal Message(string contentType, string body, Uri endPoint, WebHeaderCollection headers, int id)
+            : this(contentType, body, endPoint, headers)
+        {
+            this.Id = id;
+        }
+
         private static void ValidateParams(string contentType, string body)
         {
             if (contentType == null)
