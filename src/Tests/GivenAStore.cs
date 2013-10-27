@@ -117,5 +117,43 @@
             Assert.AreEqual(1, count);
             Assert.IsNull(storedMessage);
         }
+
+        [TestMethod]
+        public void WhenCallingGetShouldReturnMessagesInOrder()
+        {
+            var headers = new WebHeaderCollection();
+            headers["K1"] = "V1";
+            headers["K2"] = "V2";
+
+            var message = new Message("application/json", "Body", new Uri("http://www.google.com/1/api"), headers);
+            this.Store.Add(message);
+
+            message = new Message("application/json", "Body", new Uri("http://www.google.com/2/api"), headers);
+            this.Store.Add(message);
+
+            message = new Message("application/json", "Body", new Uri("http://www.google.com/3/api"), headers);
+            this.Store.Add(message);
+
+            message = new Message("application/json", "Body", new Uri("http://www.google.org/1/api"), headers);
+            this.Store.Add(message);
+
+            message = new Message("application/json", "Body", new Uri("http://www.google.org/2/api"), headers);
+            this.Store.Add(message);
+
+            message = new Message("application/json", "Body", new Uri("http://www.google.org/3/api"), headers);
+            this.Store.Add(message);
+
+            var count = this.Store.Count;
+            Assert.AreEqual(6, count);
+
+            var messages = this.Store.Get();
+            Assert.AreEqual("http://www.google.com/1/api", messages.First().EndPoint.ToString());
+            Assert.AreEqual("http://www.google.com/2/api", messages.Skip(1).First().EndPoint.ToString());
+            Assert.AreEqual("http://www.google.com/3/api", messages.Skip(2).First().EndPoint.ToString());
+
+            Assert.AreEqual("http://www.google.org/1/api", messages.Skip(3).First().EndPoint.ToString());
+            Assert.AreEqual("http://www.google.org/2/api", messages.Skip(4).First().EndPoint.ToString());
+            Assert.AreEqual("http://www.google.org/3/api", messages.Skip(5).First().EndPoint.ToString());
+        }
     }
 }

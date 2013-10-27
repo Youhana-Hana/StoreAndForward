@@ -1,5 +1,7 @@
 ﻿namespace StoreAndForward
 {
+    using System;
+    using System.Collections.Generic;
     using System.Data.Linq;
     using System.Linq;
     using System.Net;
@@ -21,16 +23,16 @@
             this.DataContext.CreateDatabase();
         }
 
-        internal MessageEntriesDataContext DataContext { get; set; }
- 
         public int Count
         {
-            get 
-            { 
+            get
+            {
                 return this.DataContext.Messages.Count();
             }
         }
 
+        internal MessageEntriesDataContext DataContext { get; set; }
+ 
         public IMessage Add(IMessage message)
         {
             var entry = this.GetMessageEntry(message);
@@ -44,8 +46,8 @@
         public void Remove(IMessage message)
         {
             var messages = from item in this.DataContext.Messages
-                         where item.MessageId == message.Id
-                         select item;
+                           where item.MessageId == message.Id
+                           select item;
 
             var entry = messages.SingleOrDefault();
             if (entry == null)
@@ -55,6 +57,23 @@
 
             this.DataContext.Messages.DeleteAllOnSubmit(messages);
             this.DataContext.SubmitChanges();
+        }
+
+        public IList<IMessage> Get()
+        {
+            var items = new List<IMessage>();
+
+            var entries = from item in this.DataContext.Messages
+                          orderby item.MessageId ascending
+                         select item;
+
+            foreach (var entry in entries)
+            {
+                var message = this.GetMessageFroEntry(entry);
+                items.Add(message);
+            }
+
+            return items;
         }
 
         internal void Delete()
@@ -92,6 +111,19 @@
                 Host = message.EndPoint.Host,
                 MessageId = message.Id
             };
+        }
+
+        private IMessage GetMessageFroEntry(MessageEntry entry)
+        {
+            var headers = new WebHeaderCollection();
+            var storedHeaders = entry.Headers;
+
+            foreach (var header in storedHeaders)
+            {
+                headers[header.Key] = header.Value;
+            }
+
+            return new Message(entry.ContentType, entry.Body, new Uri(entry.Url), headers);
         }
     }
 }
