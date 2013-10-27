@@ -41,6 +41,22 @@
             return new Message(message.ContentType, message.Body, message.EndPoint, message.Headers, entry.MessageId);
         }
 
+        public void Remove(IMessage message)
+        {
+            var messages = from item in this.DataContext.Messages
+                         where item.MessageId == message.Id
+                         select item;
+
+            var entry = messages.SingleOrDefault();
+            if (entry == null)
+            {
+                return;
+            }
+
+            this.DataContext.Messages.DeleteAllOnSubmit(messages);
+            this.DataContext.SubmitChanges();
+        }
+
         internal void Delete()
         {
             this.DataContext.DeleteDatabase();
@@ -73,7 +89,8 @@
                 Body = message.Body,
                 Url = message.EndPoint.ToString(),
                 ContentType = message.ContentType,
-                Host = message.EndPoint.Host
+                Host = message.EndPoint.Host,
+                MessageId = message.Id
             };
         }
     }

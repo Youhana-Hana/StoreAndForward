@@ -93,5 +93,29 @@
             Assert.AreEqual("K2", storedMessage.Headers.Last().Key);
             Assert.AreEqual("V2", storedMessage.Headers.Last().Value);
         }
+
+        [TestMethod]
+        public void WhenCallingRemoveShouldRemoveMessageAndHeaders()
+        {
+            var headers = new WebHeaderCollection();
+            headers["K1"] = "V1";
+            headers["K2"] = "V2";
+
+            var endPoint = new Uri("http://www.google.com/1/api");
+            var message = new Message("application/json", "Body", endPoint, headers);
+
+            var resultMessage = this.Store.Add(message);
+            var count = this.Store.Count;
+            this.Store.Remove(resultMessage);
+            
+            var messages = from m in this.Store.DataContext.Messages
+                           where m.Url == "http://www.google.com/1/api"
+                           select m;
+
+            var storedMessage = messages.FirstOrDefault();
+
+            Assert.AreEqual(1, count);
+            Assert.IsNull(storedMessage);
+        }
     }
 }

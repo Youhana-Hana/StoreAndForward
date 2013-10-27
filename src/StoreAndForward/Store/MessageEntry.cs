@@ -20,7 +20,7 @@
         }
 
         [Column(DbType = "INT NOT NULL Identity", IsDbGenerated = true, IsPrimaryKey = true, CanBeNull = false)]
-        public int MessageId { get; private set; }
+        public int MessageId { get; internal set; }
 
         [Column(CanBeNull=false)]
         public string Url { get; set; }
@@ -34,7 +34,7 @@
         [Column(CanBeNull = false)]
         public string Body { get; set; }
 
-        [Association(OtherKey = "MessageId")]
+        [Association(OtherKey = "MessageId", DeleteRule = "CASCADE")]
         public EntitySet<HeaderEntry> Headers { get; private set; }
     }
 }
