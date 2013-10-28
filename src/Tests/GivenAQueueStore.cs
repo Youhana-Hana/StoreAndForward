@@ -64,6 +64,30 @@
             Assert.AreEqual(0, this.Store.Count);
         }
 
+        [TestMethod]
+        public void WhenCallingPeekAndStoreIsEmptyShouldReturnNull()
+        {
+            var actual = this.Store.Peek();
+
+            Assert.IsNull(actual);
+        }
+
+        [TestMethod]
+        public void WhenCallingPeekThenDequeueShouldRemoveCorrectMessage()
+        {
+            var message1 = this.GetMessage("http://www.test1.com");
+            var message2 = this.GetMessage("http://www.test2.com");
+            var message3 = this.GetMessage("http://www.test3.com");
+
+            this.Store.Enqueue(message1);
+            this.Store.Enqueue(message2);
+            this.Store.Enqueue(message3);
+
+            Assert.AreEqual(3, Store.Count);
+            Assert.AreEqual(message1, this.Store.Peek());
+            Assert.AreEqual(message1, this.Store.Peek());
+         }
+
         private IMessage GetMessage(string endpoint)
         {
             return new Message("Content-Type", "", new Uri(endpoint), null);

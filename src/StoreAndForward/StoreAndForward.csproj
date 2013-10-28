@@ -86,10 +86,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ForwardService.cs" />
-    <Compile Include="IMessage.cs" />
+    <Compile Include="INewMessageHandler.cs" />
+    <Compile Include="Message\IMessage.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Store\IStore.cs" />
-    <Compile Include="Message.cs" />
+    <Compile Include="Message\Message.cs" />
     <Compile Include="Store\HeaderEntry.cs" />
     <Compile Include="Store\MessageEntriesDataContext.cs" />
     <Compile Include="Store\MessageEntry.cs" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />

@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Net;
 
-    internal class Store
+    internal class Store : IStore
     {
         public Store()
         {

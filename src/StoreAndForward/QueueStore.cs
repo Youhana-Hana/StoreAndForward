@@ -3,8 +3,12 @@
     using System;
     using System.Collections.Generic;
 
-    internal class QueueStore
+    public class QueueStore
     {
+        public delegate void NewMessageAdded(IMessage message);
+
+        public event NewMessageAdded MessageAdded;
+
         internal QueueStore()
         {
             this.Store = new Queue<IMessage>();
@@ -28,6 +32,8 @@
             }
 
             this.Store.Enqueue(message);
+
+            this.BroadcastNewMessagReceived(message);
         }
 
         internal IMessage Dequeue()
@@ -38,6 +44,28 @@
             }
             
             return this.Store.Dequeue();
+        }
+
+        internal IMessage Peek()
+        {
+            if (this.Store.Count == 0)
+            {
+                return null;
+            }
+
+            return this.Store.Peek();
+        }
+
+        private void BroadcastNewMessagReceived(IMessage message)
+        {
+            var messageHandler = this.MessageAdded;
+         
+            if (messageHandler == null)
+            {
+                return;
+            }
+
+            messageHandler.Invoke(message);
         }
     }
 }

@@ -7,7 +7,7 @@
         public StoreAndForward()
         {
             this.QueueStore = new QueueStore();
-            this.StoreService = new StoreService();
+            this.StoreService = new StoreService(this.QueueStore);
             this.ForwardService = new ForwardService();
             this.NetworkMonitorService = new NetworkStateMonitorService();
         }
@@ -42,10 +42,10 @@
         {
             this.EnsureServiceStarted();
 
-            this.StoreService.Stop();
-            this.ForwardService.Stop();
             this.NetworkMonitorService.Stop();
-        }
+            this.ForwardService.Stop();
+            this.StoreService.Stop();
+         }
 
         private void EnsureServiceStarted()
         {
