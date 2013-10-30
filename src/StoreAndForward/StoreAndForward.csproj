@@ -85,8 +85,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ForwardService.cs" />
-    <Compile Include="INewMessageHandler.cs" />
+    <Compile Include="Forward\ForwardService.cs" />
+    <Compile Include="Network\INetworkStateMonitorService.cs" />
+    <Compile Include="Store\INewMessageHandler.cs" />
     <Compile Include="Message\IMessage.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Network\ConnectionState.cs" />
@@ -96,12 +97,12 @@
     <Compile Include="Store\HeaderEntry.cs" />
     <Compile Include="Store\MessageEntriesDataContext.cs" />
     <Compile Include="Store\MessageEntry.cs" />
-    <Compile Include="NetworkStateMonitorService.cs" />
+    <Compile Include="Network\NetworkStateMonitorService.cs" />
     <Compile Include="QueueStore.cs" />
     <Compile Include="Store\Store.cs" />
     <Compile Include="StoreAndForward.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StoreService.cs" />
+    <Compile Include="Store\StoreService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="MoqaLateCommandLine\MoqaLate.exe" />

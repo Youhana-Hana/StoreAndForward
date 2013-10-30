@@ -14,7 +14,7 @@
 
         private ServiceMoqaLate ForwardService { get; set; }
 
-        private ServiceMoqaLate NewtorkService { get; set; }
+        private NetworkStateMonitorServiceMoqaLate NewtorkService { get; set; }
 
         [TestInitialize]
         public void Setup()
@@ -22,7 +22,7 @@
             this.StoreAndForward = new StoreAndForward();
             this.StoreService = new ServiceMoqaLate();
             this.ForwardService = new ServiceMoqaLate();
-            this.NewtorkService = new ServiceMoqaLate();
+            this.NewtorkService = new NetworkStateMonitorServiceMoqaLate();
 
             this.StoreAndForward.StoreService = this.StoreService;
             this.StoreAndForward.ForwardService = this.ForwardService;

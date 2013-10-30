@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class StoreAndForward : IService
+    public sealed class StoreAndForward : IService
     {
         public StoreAndForward()
         {
@@ -16,7 +16,7 @@
 
         internal IService StoreService { get; set; }
 
-        internal IService NetworkMonitorService { get; set; }
+        internal INetworkStateMonitorService NetworkMonitorService { get; set; }
 
         internal IService ForwardService { get; set; }
 

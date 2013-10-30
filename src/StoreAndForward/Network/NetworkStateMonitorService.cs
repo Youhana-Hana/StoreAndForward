@@ -3,7 +3,7 @@
     using Microsoft.Phone.Net.NetworkInformation;
     using System;
 
-    internal class NetworkStateMonitorService : IService
+    internal class NetworkStateMonitorService : INetworkStateMonitorService
     {
         public event EventHandler<NetworkStateEventArgs> NetworkStatusChanged;
 

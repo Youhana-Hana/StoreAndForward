@@ -1,6 +1,6 @@
 ﻿namespace StoreAndForward
 {
-    internal enum ConnectionState
+    public enum ConnectionState
     {
         Connected = 0,
         DisConnected = 1
