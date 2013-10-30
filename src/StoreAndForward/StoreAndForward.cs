@@ -16,9 +16,9 @@
 
         internal IService StoreService { get; set; }
 
-        internal IService ForwardService { get; set; }
-
         internal IService NetworkMonitorService { get; set; }
+
+        internal IService ForwardService { get; set; }
 
         private bool Started { get; set; }
 
