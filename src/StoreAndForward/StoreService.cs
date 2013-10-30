@@ -5,7 +5,7 @@ namespace StoreAndForward
     {
         public StoreService(QueueStore queueStore)
         {
-           this.WaitHandles = new WaitHandle[]
+            this.WaitHandles = new ManualResetEvent[]
             {
                 new ManualResetEvent(false),
                 new ManualResetEvent(false)
@@ -20,49 +20,61 @@ namespace StoreAndForward
 
         internal Thread Thread { get; set; }
 
-        internal WaitHandle[] WaitHandles { get; set; }
+        internal ManualResetEvent[] WaitHandles { get; set; }
 
         public void Start()
         {
-            //this.Store = new Store();
-            //this.ExitEvent.Reset();
-            //this.Thread = new Thread(this.ThreadStart);
-            //this.Thread.Start();
-            //this.QueueStore.MessageAdded += this.OnMessageAdded;
+            this.Store = new Store();
+            this.ResetEvents();
+            this.StartThread();
+            this.QueueStore.MessageAdded += this.OnMessageAdded;
         }
 
         public void Stop()
         {
-            //this.QueueStore.MessageAdded -= this.OnMessageAdded;
-            //this.ExitEvent.Set();
-            //this.Thread.Join();
+            this.QueueStore.MessageAdded -= this.OnMessageAdded;
+            this.WaitHandles[0].Reset();
+            this.WaitHandles[1].Set();
+            this.Thread.Join();
         }
 
         public void OnMessageAdded(IMessage message)
         {
-            //this.ResetEvent.Set();
+            this.WaitHandles[0].Set();
+        }
+
+        private void ResetEvents()
+        {
+            this.WaitHandles[0].Reset();
+            this.WaitHandles[1].Reset();
+        }
+
+        private void StartThread()
+        {
+            this.Thread = new Thread(this.ThreadStart);
+            this.Thread.Start();
         }
 
         private void ThreadStart()
         {
-            //IMessage message = null;
+            IMessage message = null;
 
-            //while(true)
-            //{
-            //    int waitExit = WaitHandle.WaitAny(WaitHandles);
+            while(true)
+            {
+                int waitExit = WaitHandle.WaitAny(WaitHandles);
 
-            //    if (waitExit == 1)
-            //    {
-            //        break;
-            //    }
+                if (waitExit == 1)
+                {
+                    break;
+                }
 
-            //    while ((message = this.QueueStore.Peek()) != null)
-            //    {
-            //        this.Store.Add(message);
+                while ((message = this.QueueStore.Peek()) != null)
+                {
+                    this.Store.Add(message);
 
-            //        this.QueueStore.Dequeue();
-            //    }
-            //}
+                    this.QueueStore.Dequeue();
+               }
+            }
         }
     }
 }
