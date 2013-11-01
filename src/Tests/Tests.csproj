@@ -85,6 +85,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GivenANetworkStateEventArgs.cs" />
+    <Compile Include="GivenAnNetworkStateMonitorService.cs" />
     <Compile Include="GivenAStoreService.cs" />
     <Compile Include="GivenAMessage.cs" />
     <Compile Include="GivenAQueueStore.cs" />
