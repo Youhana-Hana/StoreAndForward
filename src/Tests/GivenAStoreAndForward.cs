@@ -62,6 +62,17 @@
         }
 
         [TestMethod]
+        public void WhenCallingStartStopStoreShouldThrow()
+        {
+            this.StoreAndForward.Start();
+            this.StoreAndForward.Stop();
+
+            var message = new MessageMoqaLate();
+            var exception = Assert.ThrowsException<InvalidOperationException>(() => this.StoreAndForward.Store(message));
+            Assert.AreEqual("Service not started.", exception.Message);
+        }
+
+        [TestMethod]
         public void WhenCallingStoreShouldAddMessageToQueue()
         {
             this.StoreAndForward.Start();

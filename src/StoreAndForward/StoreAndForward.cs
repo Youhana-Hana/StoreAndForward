@@ -45,6 +45,7 @@
             this.NetworkMonitorService.Stop();
             this.ForwardService.Stop();
             this.StoreService.Stop();
+            this.Started = false;
          }
 
         private void EnsureServiceStarted()

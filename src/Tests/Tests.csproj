@@ -77,13 +77,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Fakes\NetworkStateMonitorServiceMoqaLate.cs" />
-    <Compile Include="Fakes\NewMessageHandlerMoqaLate.cs" />
     <Compile Include="Fakes\ServiceMoqaLate.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Fakes\StoreMoqaLate.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GivenAMessageAddedEventArgs.cs" />
     <Compile Include="GivenANetworkStateEventArgs.cs" />
     <Compile Include="GivenAnNetworkStateMonitorService.cs" />
     <Compile Include="GivenAStoreService.cs" />

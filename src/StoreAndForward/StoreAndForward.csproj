@@ -86,8 +86,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Forward\ForwardService.cs" />
+    <Compile Include="Store\MessageAddedEventArgs.cs" />
     <Compile Include="Network\INetworkStateMonitorService.cs" />
-    <Compile Include="Store\INewMessageHandler.cs" />
     <Compile Include="Message\IMessage.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Network\ConnectionState.cs" />

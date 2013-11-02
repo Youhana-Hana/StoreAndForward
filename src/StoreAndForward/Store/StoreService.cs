@@ -1,7 +1,8 @@
-﻿using System.Threading;
-namespace StoreAndForward
+﻿namespace StoreAndForward
 {
-    public class StoreService: IService, INewMessageHandler
+    using System.Threading;
+
+    public class StoreService: IService
     {
         public StoreService(QueueStore queueStore)
         {
@@ -38,7 +39,7 @@ namespace StoreAndForward
             this.Thread.Join();
         }
 
-        public void OnMessageAdded(IMessage message)
+        public void OnMessageAdded(object sender, MessageAddedEventArgs args)
         {
             this.WaitHandles[0].Set();
         }

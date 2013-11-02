@@ -5,9 +5,7 @@
 
     public class QueueStore
     {
-        public delegate void NewMessageAdded(IMessage message);
-
-        public event NewMessageAdded MessageAdded;
+        public event EventHandler<MessageAddedEventArgs> MessageAdded;
 
         internal QueueStore()
         {
@@ -65,7 +63,7 @@
                 return;
             }
 
-            messageHandler.Invoke(message);
+            messageHandler.Invoke(this, new MessageAddedEventArgs(message));
         }
     }
 }
