@@ -85,7 +85,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Forward\Extensions.cs" />
     <Compile Include="Forward\ForwardService.cs" />
+    <Compile Include="Forward\HttpClient.cs" />
     <Compile Include="Forward\IHttpClient.cs" />
     <Compile Include="Forward\PostResult.cs" />
     <Compile Include="Store\MessageAddedEventArgs.cs" />
@@ -115,7 +117,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
