@@ -10,10 +10,7 @@
     {
         public Store()
         {
-            DataLoadOptions loadOptions = new DataLoadOptions();
-            loadOptions.LoadWith<MessageEntry>(m => m.Headers);
             this.DataContext = new MessageEntriesDataContext("Data Source=isostore:/StoreAndForward.sdf");
-            this.DataContext.LoadOptions = loadOptions;
             
             if (DataContext.DatabaseExists())
             {
@@ -22,6 +19,8 @@
 
             this.DataContext.CreateDatabase();
         }
+
+        public event EventHandler<MessageAddedEventArgs> MessageAdded;
 
         public int Count
         {
@@ -40,6 +39,7 @@
 
             this.DataContext.Messages.InsertOnSubmit(entry);
             this.DataContext.SubmitChanges();
+            this.BroadcastNewMessagAdded(message);
             return new Message(message.ContentType, message.Body, message.EndPoint, message.Headers, entry.MessageId);
         }
 
@@ -80,6 +80,7 @@
         {
             this.DataContext.DeleteDatabase();
         }
+
         
         private void AddHeaders(MessageEntry messageEntry, WebHeaderCollection headers)
         {
@@ -124,6 +125,18 @@
             }
 
             return new Message(entry.ContentType, entry.Body, new Uri(entry.Url), headers);
+        }
+
+        private void BroadcastNewMessagAdded(IMessage message)
+        {
+            var messageHandler = this.MessageAdded;
+
+            if (messageHandler == null)
+            {
+                return;
+            }
+
+            messageHandler.Invoke(this, new MessageAddedEventArgs(message));
         }
     }
 }

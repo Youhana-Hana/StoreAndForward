@@ -14,16 +14,13 @@
 
         private StoreMoqaLate Store { get; set; }
 
-        private Store RealStore { get; set; }
-
         [TestInitialize]
         public void Setup()
         {
             this.QueueStore = new QueueStore();
             this.Store = new StoreMoqaLate();
-            this.RealStore = null;
-
-            this.StoreService = new StoreService(this.QueueStore);
+            
+            this.StoreService = new StoreService(this.QueueStore, this.Store);
         }
 
         [TestMethod]
@@ -35,22 +32,12 @@
         [TestMethod]
         public void WhenConstructingShouldInitializeStore()
         {
-            this.StoreService = new StoreService(this.QueueStore);
+            this.StoreService = new StoreService(this.QueueStore, this.Store);
 
-            Assert.IsNull(this.StoreService.Store);
+            Assert.IsNotNull(this.StoreService.Store);
             Assert.IsNotNull(this.StoreService.QueueStore);
             Assert.IsNotNull(this.StoreService.WaitHandles);
             Assert.AreEqual(2, this.StoreService.WaitHandles.Length);
-        }
-
-        [TestMethod]
-        public void WhenCallingStartShouldAllocateStore()
-        {
-            this.StoreService.Start();
-            Thread.Sleep(200);
-            this.StoreService.Stop();
-
-            Assert.IsNotNull(this.StoreService.Store);
         }
 
         [TestMethod]
@@ -93,7 +80,6 @@
         public void WhenCallingStopShouldUnregisterFromMessagesEvents()
         {
             this.StoreService.Start();
-            this.StoreService.Store = this.Store;
             this.StoreService.QueueStore.Enqueue(new MessageMoqaLate());
             Thread.Sleep(200);
             this.StoreService.Stop();
@@ -120,7 +106,6 @@
         public void WhenCallingStartAndMessageAddedShouldStoreIt()
         {
             this.StoreService.Start();
-            this.StoreService.Store = this.Store;
             this.StoreService.QueueStore.Enqueue(new MessageMoqaLate());
             Thread.Sleep(200);
             this.StoreService.Stop();

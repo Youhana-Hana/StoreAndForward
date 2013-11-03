@@ -40,7 +40,8 @@
         {
             this.StoreAndForward = new StoreAndForward();
 
-            Assert.IsNotNull(this.StoreAndForward.QueueStore);
+            Assert.IsNotNull(this.StoreAndForward.VolatileStore);
+            Assert.IsNotNull(this.StoreAndForward.PersistStore);
             Assert.IsNotNull(this.StoreAndForward.StoreService);
             Assert.IsNotNull(this.StoreAndForward.ForwardService);
             Assert.IsNotNull(this.StoreAndForward.NetworkMonitorService);
@@ -77,10 +78,10 @@
         {
             this.StoreAndForward.Start();
 
-            var countBeforeAdd = this.StoreAndForward.QueueStore.Count;
+            var countBeforeAdd = this.StoreAndForward.VolatileStore.Count;
             var message = new MessageMoqaLate();
             this.StoreAndForward.Store(message);
-            var countAfterAdd = this.StoreAndForward.QueueStore.Count;
+            var countAfterAdd = this.StoreAndForward.VolatileStore.Count;
 
             Assert.AreEqual(0, countBeforeAdd);
             Assert.AreEqual(1, countAfterAdd);

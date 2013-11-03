@@ -11,6 +11,8 @@
     {
         private Store Store { get; set; }
 
+        private IMessage ReceivedMessage { get; set; }
+
         [TestInitialize]
         public void Setup()
         {
@@ -95,6 +97,31 @@
         }
 
         [TestMethod]
+        public void WhenCallingAddShouldNotifySubscrivers()
+        {
+            var headers = new WebHeaderCollection();
+            headers["K1"] = "V1";
+            headers["K2"] = "V2";
+
+            var endPoint = new Uri("http://www.google.com/1/api");
+            var message = new Message("application/json", "Body", endPoint, headers);
+            this.Store.MessageAdded += Store_MessageAdded;
+
+            var resultMessage = this.Store.Add(message);
+
+            Assert.AreEqual(message.Body, this.ReceivedMessage.Body);
+            Assert.AreEqual(message.ContentType, this.ReceivedMessage.ContentType);
+            Assert.AreEqual(message.EndPoint.ToString(), this.ReceivedMessage.EndPoint.ToString());
+            Assert.AreEqual(message.EndPoint.Host, this.ReceivedMessage.EndPoint.Host);
+            Assert.AreEqual(1, resultMessage.Id);
+            Assert.AreEqual(2, ReceivedMessage.Headers.Count);
+            Assert.AreEqual("K1", this.ReceivedMessage.Headers.AllKeys.First());
+            Assert.AreEqual("V1", this.ReceivedMessage.Headers["k1"]);
+            Assert.AreEqual("K2", this.ReceivedMessage.Headers.AllKeys.Last());
+            Assert.AreEqual("V2", this.ReceivedMessage.Headers["k2"]);
+        }
+
+        [TestMethod]
         public void WhenCallingRemoveShouldRemoveMessageAndHeaders()
         {
             var headers = new WebHeaderCollection();
@@ -154,6 +181,11 @@
             Assert.AreEqual("http://www.google.org/1/api", messages.Skip(3).First().EndPoint.ToString());
             Assert.AreEqual("http://www.google.org/2/api", messages.Skip(4).First().EndPoint.ToString());
             Assert.AreEqual("http://www.google.org/3/api", messages.Skip(5).First().EndPoint.ToString());
+        }
+
+        void Store_MessageAdded(object sender, MessageAddedEventArgs e)
+        {
+            this.ReceivedMessage = e.Message;
         }
     }
 }

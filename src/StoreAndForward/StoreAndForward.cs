@@ -6,13 +6,16 @@
     {
         public StoreAndForward()
         {
-            this.QueueStore = new QueueStore();
-            this.StoreService = new StoreService(this.QueueStore);
-            this.ForwardService = new ForwardService();
+            this.VolatileStore = new QueueStore();
+            this.PersistStore = new Store();
+            this.StoreService = new StoreService(this.VolatileStore, this.PersistStore);
             this.NetworkMonitorService = new NetworkStateMonitorService();
+            this.ForwardService = new ForwardService(this.PersistStore, this.NetworkMonitorService);
         }
 
-        internal QueueStore QueueStore { get; set; }
+        internal QueueStore VolatileStore { get; set; }
+
+        internal IStore PersistStore { get; set; }
 
         internal IService StoreService { get; set; }
 
@@ -34,8 +37,8 @@
         public void Store(IMessage message)
         {
             this.EnsureServiceStarted();
-            
-            this.QueueStore.Enqueue(message);
+
+            this.VolatileStore.Enqueue(message);
         }
         
         public void Stop()

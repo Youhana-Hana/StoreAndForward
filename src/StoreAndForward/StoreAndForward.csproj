@@ -86,6 +86,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Forward\ForwardService.cs" />
+    <Compile Include="Forward\IHttpClient.cs" />
+    <Compile Include="Forward\PostResult.cs" />
     <Compile Include="Store\MessageAddedEventArgs.cs" />
     <Compile Include="Network\INetworkStateMonitorService.cs" />
     <Compile Include="Message\IMessage.cs" />
@@ -98,7 +100,7 @@
     <Compile Include="Store\MessageEntriesDataContext.cs" />
     <Compile Include="Store\MessageEntry.cs" />
     <Compile Include="Network\NetworkStateMonitorService.cs" />
-    <Compile Include="QueueStore.cs" />
+    <Compile Include="Store\QueueStore.cs" />
     <Compile Include="Store\Store.cs" />
     <Compile Include="StoreAndForward.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

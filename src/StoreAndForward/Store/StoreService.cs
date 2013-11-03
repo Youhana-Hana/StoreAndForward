@@ -1,18 +1,16 @@
 ﻿namespace StoreAndForward
 {
+    using System;
     using System.Threading;
 
     public class StoreService: IService
     {
-        public StoreService(QueueStore queueStore)
+        public StoreService(QueueStore queueStore, IStore store)
         {
-            this.WaitHandles = new ManualResetEvent[]
-            {
-                new ManualResetEvent(false),
-                new ManualResetEvent(false)
-            };
-
             this.QueueStore = queueStore;
+            this.Store = store;
+
+           this.PrepareWaitHandles();
         }
 
         internal IStore Store { get; set; }
@@ -25,7 +23,6 @@
 
         public void Start()
         {
-            this.Store = new Store();
             this.ResetEvents();
             this.StartThread();
             this.QueueStore.MessageAdded += this.OnMessageAdded;
@@ -39,7 +36,16 @@
             this.Thread.Join();
         }
 
-        public void OnMessageAdded(object sender, MessageAddedEventArgs args)
+        private void PrepareWaitHandles()
+        {
+            this.WaitHandles = new ManualResetEvent[]
+            {
+                new ManualResetEvent(false),
+                new ManualResetEvent(false)
+            };
+        }
+
+        private void OnMessageAdded(object sender, MessageAddedEventArgs args)
         {
             this.WaitHandles[0].Set();
         }
@@ -72,7 +78,6 @@
                 while ((message = this.QueueStore.Peek()) != null)
                 {
                     this.Store.Add(message);
-
                     this.QueueStore.Dequeue();
                }
             }

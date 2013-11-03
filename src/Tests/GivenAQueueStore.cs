@@ -9,10 +9,13 @@
     {
         private QueueStore Store { get; set; }
 
+        private IMessage ReceivedMessage { get; set; }
+
         [TestInitialize]
         public void Setup()
         {
             this.Store = new QueueStore();
+            this.ReceivedMessage = null;
         }
 
         [TestMethod]
@@ -87,6 +90,22 @@
             Assert.AreEqual(message1, this.Store.Peek());
             Assert.AreEqual(message1, this.Store.Peek());
          }
+
+        [TestMethod]
+        public void WhenCallingEnqueueShouldNotifySubscrivers()
+        {
+            var message = this.GetMessage("http://www.test1.com");
+            
+            this.Store.MessageAdded += Store_MessageAdded;
+            this.Store.Enqueue(message);
+
+            Assert.AreEqual(message, this.ReceivedMessage);
+        }
+
+        void Store_MessageAdded(object sender, MessageAddedEventArgs e)
+        {
+            this.ReceivedMessage = e.Message;
+        }
 
         private IMessage GetMessage(string endpoint)
         {
