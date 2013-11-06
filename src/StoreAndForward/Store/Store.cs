@@ -5,11 +5,14 @@
     using System.Data.Linq;
     using System.Linq;
     using System.Net;
+using System.Threading;
 
     internal class Store : IStore
     {
         public Store()
         {
+            this.OperationEvent = new AutoResetEvent(true);
+
             this.DataContext = new MessageEntriesDataContext("Data Source=isostore:/StoreAndForward.sdf");
             
             if (DataContext.DatabaseExists())
@@ -26,62 +29,109 @@
         {
             get
             {
-                return this.DataContext.Messages.Count();
+                try
+                {
+                    this.OperationEvent.WaitOne();
+
+                    return this.DataContext.Messages.Count();
+                }
+                finally
+                {
+                    this.OperationEvent.Set();
+                }
             }
         }
 
         internal MessageEntriesDataContext DataContext { get; set; }
- 
+
+        private AutoResetEvent OperationEvent { get; set; }
+
         public IMessage Add(IMessage message)
         {
-            var entry = this.GetMessageEntry(message);
-            this.AddHeaders(entry, message.Headers);
+            try
+            {
+                this.OperationEvent.WaitOne();
 
-            this.DataContext.Messages.InsertOnSubmit(entry);
-            this.DataContext.SubmitChanges();
-            this.BroadcastNewMessagAdded(message);
-            return new Message(message.ContentType, message.Body, message.EndPoint, message.Headers, entry.MessageId);
+                var entry = this.GetMessageEntry(message);
+                this.AddHeaders(entry, message.Headers);
+
+                this.DataContext.Messages.InsertOnSubmit(entry);
+                this.DataContext.SubmitChanges();
+                this.BroadcastNewMessagAdded(message);
+                return new Message(message.ContentType, message.Body, message.EndPoint, message.Headers, entry.MessageId);
+            }
+            finally
+            {
+                this.OperationEvent.Set();
+            }
         }
 
         public void Remove(IMessage message)
         {
-            var messages = from item in this.DataContext.Messages
-                           where item.MessageId == message.Id
-                           select item;
-
-            var entry = messages.SingleOrDefault();
-            if (entry == null)
+            try
             {
-                return;
-            }
+                this.OperationEvent.WaitOne();
 
-            this.DataContext.Messages.DeleteAllOnSubmit(messages);
-            this.DataContext.SubmitChanges();
+                var messages = from item in this.DataContext.Messages
+                               where item.MessageId == message.Id
+                               select item;
+
+                var entry = messages.SingleOrDefault();
+                if (entry == null)
+                {
+                    return;
+                }
+
+                this.DataContext.Messages.DeleteAllOnSubmit(messages);
+                this.DataContext.SubmitChanges();
+            }
+            finally
+            {
+                this.OperationEvent.Set();
+            }
         }
 
         public IList<IMessage> Get()
         {
-            var items = new List<IMessage>();
-
-            var entries = from item in this.DataContext.Messages
-                          orderby item.MessageId ascending
-                         select item;
-
-            foreach (var entry in entries)
+            try
             {
-                var message = this.GetMessageFroEntry(entry);
-                items.Add(message);
-            }
+                this.OperationEvent.WaitOne();
 
-            return items;
+                var items = new List<IMessage>();
+
+                var entries = from item in this.DataContext.Messages
+                              orderby item.MessageId ascending
+                              select item;
+
+                var messages = entries.ToList();
+
+                foreach (var entry in messages)
+                {
+                    var message = this.GetMessageFromEntry(entry);
+                    items.Add(message);
+                }
+
+                return items;
+            }
+            finally
+            {
+                this.OperationEvent.Set();
+            }
         }
 
         internal void Delete()
         {
-            this.DataContext.DeleteDatabase();
+            try
+            {
+                this.OperationEvent.WaitOne();
+                this.DataContext.DeleteDatabase();
+            }
+            finally
+            {
+                this.OperationEvent.Set();
+            }
         }
 
-        
         private void AddHeaders(MessageEntry messageEntry, WebHeaderCollection headers)
         {
             foreach (var key in headers.AllKeys)
@@ -114,7 +164,7 @@
             };
         }
 
-        private IMessage GetMessageFroEntry(MessageEntry entry)
+        private IMessage GetMessageFromEntry(MessageEntry entry)
         {
             var headers = new WebHeaderCollection();
             var storedHeaders = entry.Headers;
@@ -124,7 +174,7 @@
                 headers[header.Key] = header.Value;
             }
 
-            return new Message(entry.ContentType, entry.Body, new Uri(entry.Url), headers);
+            return new Message(entry.ContentType, entry.Body, new Uri(entry.Url), headers, entry.MessageId);
         }
 
         private void BroadcastNewMessagAdded(IMessage message)
@@ -137,6 +187,11 @@
             }
 
             messageHandler.Invoke(this, new MessageAddedEventArgs(message));
+        }
+
+        public void Dispose()
+        {
+            this.DataContext.Dispose();
         }
     }
 }

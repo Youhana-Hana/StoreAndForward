@@ -175,12 +175,22 @@
 
             var messages = this.Store.Get();
             Assert.AreEqual("http://www.google.com/1/api", messages.First().EndPoint.ToString());
+            Assert.AreEqual(1, messages.First().Id);
+            
             Assert.AreEqual("http://www.google.com/2/api", messages.Skip(1).First().EndPoint.ToString());
+            Assert.AreEqual(2, messages.Skip(1).First().Id);
+            
             Assert.AreEqual("http://www.google.com/3/api", messages.Skip(2).First().EndPoint.ToString());
+            Assert.AreEqual(3, messages.Skip(2).First().Id);
 
             Assert.AreEqual("http://www.google.org/1/api", messages.Skip(3).First().EndPoint.ToString());
+            Assert.AreEqual(4, messages.Skip(3).First().Id);
+            
             Assert.AreEqual("http://www.google.org/2/api", messages.Skip(4).First().EndPoint.ToString());
+            Assert.AreEqual(5, messages.Skip(4).First().Id);
+            
             Assert.AreEqual("http://www.google.org/3/api", messages.Skip(5).First().EndPoint.ToString());
+            Assert.AreEqual(6, messages.Skip(5).First().Id);
         }
 
         void Store_MessageAdded(object sender, MessageAddedEventArgs e)

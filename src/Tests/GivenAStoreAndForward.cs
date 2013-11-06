@@ -45,6 +45,7 @@
             Assert.IsNotNull(this.StoreAndForward.StoreService);
             Assert.IsNotNull(this.StoreAndForward.ForwardService);
             Assert.IsNotNull(this.StoreAndForward.NetworkMonitorService);
+            Assert.IsNotNull(this.StoreAndForward.HttpClient);
         }
 
         [TestMethod]

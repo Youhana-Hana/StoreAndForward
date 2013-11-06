@@ -73,6 +73,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Fakes\HttpClientMoqaLate.cs" />
+    <Compile Include="GivenAForwardService.cs" />
     <Compile Include="Fakes\MessageMoqaLate.cs">
       <SubType>Code</SubType>
     </Compile>

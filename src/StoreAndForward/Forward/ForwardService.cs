@@ -1,106 +1,122 @@
 ﻿namespace StoreAndForward
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading;
 
     internal class ForwardService : IService
     {
-        public ForwardService(IStore store, INetworkStateMonitorService networkStateMonitorService)
+        public ForwardService(IStore store, INetworkStateMonitorService networkStateMonitorService, IHttpClient httpClient)
         {
-        //    this.Store = store;
-        //    this.NetworkStateMonitorService = networkStateMonitorService;
+            this.Store = store;
+            this.NetworkStateMonitorService = networkStateMonitorService;
+            this.HttpClient = httpClient;
 
-        //    this.PrepareWaitHandles();
+            this.PrepareWaitHandles();
         }
 
-        //internal Thread Thread { get; set; }
+        internal Thread Thread { get; set; }
 
-        //internal ManualResetEvent[] WaitHandles { get; set; }
+        internal ManualResetEvent[] WaitHandles { get; set; }
 
-        //private IStore Store { get; set; }
+        internal IStore Store { get; set; }
 
-        //private INetworkStateMonitorService NetworkStateMonitorService { get; set; }
+        internal INetworkStateMonitorService NetworkStateMonitorService { get; set; }
+
+        internal IHttpClient HttpClient { get; set; }
 
         public void Start()
         {
-            //this.ResetEvents();
-            //this.StartThread();
+            this.ResetEvents();
+            this.StartThread();
 
-            //this.Store.MessageAdded += Store_MessageAdded;
-            //this.NetworkStateMonitorService.NetworkStatusChanged += NetworkStateMonitorService_NetworkStatusChanged;
+            this.Store.MessageAdded += Store_MessageAdded;
+            this.NetworkStateMonitorService.NetworkStatusChanged += NetworkStateMonitorService_NetworkStatusChanged;
+
+            this.StartForwardStoredMessages();
         }
-
 
         public void Stop()
         {
-            //this.Store.MessageAdded -= Store_MessageAdded;
-            //this.NetworkStateMonitorService.NetworkStatusChanged -= NetworkStateMonitorService_NetworkStatusChanged;
+            this.Store.MessageAdded -= Store_MessageAdded;
+            this.NetworkStateMonitorService.NetworkStatusChanged -= NetworkStateMonitorService_NetworkStatusChanged;
  
-            //this.WaitHandles[0].Reset();
-            //this.WaitHandles[1].Set();
-            //this.Thread.Join();
+            this.WaitHandles[0].Reset();
+            this.WaitHandles[1].Set();
+            this.Thread.Join();
         }
 
-//        private void NetworkStateMonitorService_NetworkStatusChanged(object sender, NetworkStateEventArgs e)
-//        {
-//            if (e.ConnectionState != ConnectionState.Connected)
-//            {
-//                return;
-//            }
+        private void NetworkStateMonitorService_NetworkStatusChanged(object sender, NetworkStateEventArgs e)
+        {
+            if (e.ConnectionState != ConnectionState.Connected)
+            {
+                return;
+            }
 
-//            this.StartForwardStoredMessages();
-//        }
+            this.StartForwardStoredMessages();
+        }
 
-//        private void Store_MessageAdded(object sender, MessageAddedEventArgs args)
-//        {
-//            this.StartForwardStoredMessages();
-//        }
+        private void Store_MessageAdded(object sender, MessageAddedEventArgs args)
+        {
+            this.StartForwardStoredMessages();
+        }
 
-//        private void StartForwardStoredMessages()
-//        {
-//            this.WaitHandles[0].Set();
-//        }
+        private void StartForwardStoredMessages()
+        {
+            this.WaitHandles[0].Set();
+        }
 
-//        private void PrepareWaitHandles()
-//        {
-//            this.WaitHandles = new ManualResetEvent[]
-//            {
-//                new ManualResetEvent(false),
-//                new ManualResetEvent(false)
-//            };
-//        }
+        private void PauseForwardStoredMessages()
+        {
+            this.WaitHandles[0].Reset();
+        }
 
-//        private void ResetEvents()
-//        {
-//            this.WaitHandles[0].Reset();
-//            this.WaitHandles[1].Reset();
-//        }
+        private void PrepareWaitHandles()
+        {
+            this.WaitHandles = new ManualResetEvent[]
+            {
+                new ManualResetEvent(false),
+                new ManualResetEvent(false)
+            };
+        }
 
-//        private void StartThread()
-//        {
-//            this.Thread = new Thread(this.ThreadStart);
-//            this.Thread.Start();
-//        }
+        private void ResetEvents()
+        {
+            this.WaitHandles[0].Reset();
+            this.WaitHandles[1].Reset();
+        }
 
-//        private void ThreadStart()
-//        {
-//////            IMessage message = null;
+        private void StartThread()
+        {
+            this.Thread = new Thread(this.ThreadStart);
+            this.Thread.Start();
+        }
 
-//            while (true)
-//            {
-//                int waitExit = WaitHandle.WaitAny(WaitHandles);
+        private void ThreadStart()
+        {
+            while (true)
+            {
+                int waitExit = WaitHandle.WaitAny(WaitHandles);
 
-//                if (waitExit == 1)
-//                {
-//                    break;
-//                }
+                if (waitExit == 1)
+                {
+                    break;
+                }
 
-
-//            //    while ((message = this.QueueStore.Peek()) != null)
-//            //    {
-//            //        this.Store.Add(message);
-//            //        this.QueueStore.Dequeue();
-//            //    }
-//            }
-//        }
+                var messages = this.Store.Get();
+                
+                foreach (var message in messages)
+                {
+                    var postResult = this.HttpClient.Post(message);
+                       
+                    if (postResult != PostResult.TemporaryError)
+                    {
+                        this.Store.Remove(message);
+                    }
+                }
+                
+                this.PauseForwardStoredMessages();
+            }
+        }
     }
 }

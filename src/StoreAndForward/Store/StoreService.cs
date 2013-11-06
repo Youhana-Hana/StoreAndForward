@@ -56,6 +56,11 @@
             this.WaitHandles[1].Reset();
         }
 
+        private void ResetNotificationEvent()
+        {
+            this.WaitHandles[0].Reset();
+        }
+
         private void StartThread()
         {
             this.Thread = new Thread(this.ThreadStart);
@@ -80,6 +85,8 @@
                     this.Store.Add(message);
                     this.QueueStore.Dequeue();
                }
+
+                this.ResetNotificationEvent();
             }
         }
     }

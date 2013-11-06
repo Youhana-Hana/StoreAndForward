@@ -8,10 +8,13 @@
         {
             this.VolatileStore = new QueueStore();
             this.PersistStore = new Store();
+            this.HttpClient = new HttpClient();
             this.StoreService = new StoreService(this.VolatileStore, this.PersistStore);
             this.NetworkMonitorService = new NetworkStateMonitorService();
-            this.ForwardService = new ForwardService(this.PersistStore, this.NetworkMonitorService);
+            this.ForwardService = new ForwardService(this.PersistStore, this.NetworkMonitorService, this.HttpClient);
         }
+
+        internal IHttpClient HttpClient { get; set; }
 
         internal QueueStore VolatileStore { get; set; }
 
