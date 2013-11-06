@@ -57,8 +57,9 @@ using System.Threading;
 
                 this.DataContext.Messages.InsertOnSubmit(entry);
                 this.DataContext.SubmitChanges();
-                this.BroadcastNewMessagAdded(message);
-                return new Message(message.ContentType, message.Body, message.EndPoint, message.Headers, entry.MessageId);
+                var addedMessage = new Message(message.ContentType, message.Body, message.EndPoint, message.Headers, entry.MessageId);
+                this.BroadcastNewMessagAdded(addedMessage);
+                return addedMessage;
             }
             finally
             {
@@ -134,6 +135,11 @@ using System.Threading;
 
         private void AddHeaders(MessageEntry messageEntry, WebHeaderCollection headers)
         {
+            if (headers == null)
+            {
+                return;
+            }
+
             foreach (var key in headers.AllKeys)
             {
                 var header = this.AddHeader(key, headers[key], messageEntry);
